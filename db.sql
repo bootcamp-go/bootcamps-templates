@@ -1,104 +1,54 @@
-create table buyers
-(
-    id             integer
-        constraint employees_pk
-            primary key autoincrement,
-    card_number_id varchar,
-    first_name     varchar,
-    last_name      varchar
+create table products(
+    `id` int not null primary key auto_increment,
+    `description` text not null,
+    expiration_rate int not null,
+    freezing_rate int not null,
+    height int not null,
+    lenght int not null,
+    netweight int not null,
+    product_code text not null,
+    recommended_freezing_temperature int not null,
+    width int not null,
+    id_product_type int not null,
+    id_seller int not null
 );
-
-create unique index buyers_id_uindex
-    on buyers (id);
-
-create table employees
-(
-    id             integer
-        constraint employees_pk
-            primary key autoincrement,
-    card_number_id varchar,
-    first_name     varchar,
-    last_name      varchar,
-    warehouse_id   int
+create table employees(
+    `id` int not null primary key auto_increment,
+    card_number_id text not null,
+    first_name text not null,
+    last_name text not null,
+    warehouse_id int not null
 );
-
-create unique index employees_id_uindex
-    on employees (id);
-
-create table products
-(
-    id                               INTEGER not null
-        primary key autoincrement,
-    description                      TEXT,
-    expiration_rate                  INTEGER,
-    freezing_rate                    INTEGER,
-    height                           INTEGER not null,
-    lenght                           INTEGER not null,
-    netweight                        INTEGER not null,
-    product_code                     TEXT    not null,
-    recommended_freezing_temperature INTEGER,
-    width                            INTEGER not null,
-    id_product_type                  INTEGER,
-    id_seller                        INTEGER
+create table warehouses(
+    `id` int not null primary key auto_increment,
+    `address` text null,
+    telephone text null,
+    warehouse_code text null,
+    minimun_capacity int null,
+    minimun_temperature int null,
+    section_number int null
 );
-
-create table sections
-(
-    id                  integer
-        constraint sections_pk
-            primary key autoincrement,
-    section_number      int,
-    current_temperature int,
-    minimum_temperature int,
-    current_capacity    int,
-    minimum_capacity    int,
-    maximum_capacity    int,
-    warehouse_id        int,
-    product_type_id     int
+create table sections(
+    `id` int not null primary key auto_increment,
+    section_number int not null,
+    current_temperature int not null,
+    minimum_temperature int not null,
+    current_capacity int not null,
+    minimum_capacity int not null,
+    maximum_capacity int not null,
+    warehouse_id int not null,
+    id_product_type int not null
 );
-
-create unique index sections_id_uindex
-    on sections (id);
-
-create table sellers
-(
-    id           integer not null
-        constraint sellers_pk
-            primary key autoincrement,
-    cid          int     not null,
-    company_name varchar not null,
-    address      varchar not null,
-    telephone    varchar not null,
-    locality_id  int     not null
+create table sellers(
+    `id` int not null primary key auto_increment,
+    cid int not null,
+    company_name text not null,
+    `address` text not null,
+    telephone varchar(15) not null
 );
-
-create unique index sellers_cid_uindex
-    on sellers (cid);
-
-create unique index sellers_id_uindex
-    on sellers (id);
-
-create table users
-(
-    id       INTEGER not null
-        primary key autoincrement,
-    password TEXT    not null,
-    username TEXT    not null
+create table buyers(
+    `id` int not null primary key auto_increment,
+    card_number_id text not null,
+    first_name text not null,
+    last_name text not null
 );
-
-create table warehouses
-(
-    id                  integer
-        constraint warehouses_pk
-            primary key autoincrement,
-    address             varchar,
-    telephone           varchar,
-    warehouse_code      varchar,
-    minimun_capacity    int,
-    minimun_temperature int,
-    section_number      int
-);
-
-create unique index warehouses_id_uindex
-    on warehouses (id);
-

@@ -1,8 +1,7 @@
-
 PACKAGES_PATH = $(shell go list -f '{{ .Dir }}' ./...)
 
 .PHONY: all
-all: ensure-deps fmt imports test
+all: ensure-deps fmt test
 
 .PHONY: ensure-deps
 ensure-deps:
@@ -13,11 +12,6 @@ ensure-deps:
 fmt:
 	@echo "=> Executing go fmt"
 	@go fmt ./...
-
-.PHONY: imports
-imports:
-	@echo "=> Executing goimports"
-	@goimports -w $(PACKAGES_PATH)
 
 .PHONY: test
 test:
@@ -33,3 +27,8 @@ test-cover:
 .PHONY: start
 start:
 	@go run cmd/server/main.go
+
+.PHONY: build-database
+build-database:
+	@mysql -u $(u) -p$(p) -e "CREATE DATABASE IF NOT EXISTS meli"
+	@mysql -u $(u) -p$(p) meli < db.sql

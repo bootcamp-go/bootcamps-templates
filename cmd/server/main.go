@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 
-	// db, _ := sql.Open("sqlite3", "./meli.db")
+	// db, _ := sql.Open("mysql", "root:root@/meli")
 	router := gin.Default()
 
 	// Codigo de ayuda

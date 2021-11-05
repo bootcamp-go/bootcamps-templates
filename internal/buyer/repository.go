@@ -29,7 +29,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
-	rows, err := r.db.Query(`SELECT * FROM "main"."buyers"`)
+	rows, err := r.db.Query(`SELECT * FROM buyers`)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Buyer, error) {
 
-	sqlStatement := `SELECT * FROM "main"."buyers" WHERE id=$1;`
+	sqlStatement := `SELECT * FROM buyers WHERE id = ?;`
 	row := r.db.QueryRow(sqlStatement, id)
 	b := domain.Buyer{}
 	err := row.Scan(&b.ID, &b.CardNumberID, &b.FirstName, &b.LastName)
@@ -59,7 +59,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Buyer, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
-	sqlStatement := `SELECT card_number_id FROM "main"."buyers" WHERE card_number_id=$1;`
+	sqlStatement := `SELECT card_number_id FROM buyers WHERE card_number_id=?;`
 	row := r.db.QueryRow(sqlStatement, cardNumberID)
 	err := row.Scan(&cardNumberID)
 	return err == nil
@@ -67,7 +67,7 @@ func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
 
 func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO "main"."buyers"("card_number_id","first_name","last_name") VALUES (?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO buyers("card_number_id","first_name","last_name") VALUES (?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,12 +86,12 @@ func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
-	stmt, err := r.db.Prepare(`UPDATE "main"."buyers" SET "first_name"=?, "last_name"=?  WHERE "card_number_id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE buyers SET "first_name"=?, "last_name"=?  WHERE "id"=?`)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(&b.FirstName, &b.LastName, &b.CardNumberID)
+	res, err := stmt.Exec(&b.FirstName, &b.LastName, &b.ID)
 	if err != nil {
 		return err
 	}
@@ -108,7 +108,7 @@ func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	stmt, err := r.db.Prepare(`DELETE FROM "main"."buyers" WHERE id=?`)
+	stmt, err := r.db.Prepare(`DELETE FROM buyers WHERE id = ?`)
 	if err != nil {
 		return err
 	}

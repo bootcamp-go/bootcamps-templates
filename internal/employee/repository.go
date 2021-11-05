@@ -29,7 +29,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Employee, error) {
-	rows, err := r.db.Query(`SELECT * FROM "main"."employees"`)
+	rows, err := r.db.Query(`SELECT * FROM employees`)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Employee, error) {
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Employee, error) {
 
-	sqlStatement := `SELECT * FROM "main"."employees" WHERE id=$1;`
+	sqlStatement := `SELECT * FROM employees WHERE id=?;`
 	row := r.db.QueryRow(sqlStatement, id)
 	e := domain.Employee{}
 	err := row.Scan(&e.ID, &e.CardNumberID, &e.FirstName, &e.LastName, &e.WarehouseID)
@@ -59,7 +59,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Employee, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
-	sqlStatement := `SELECT card_number_id FROM "main"."employees" WHERE card_number_id=$1;`
+	sqlStatement := `SELECT card_number_id FROM employees WHERE card_number_id=?;`
 	row := r.db.QueryRow(sqlStatement, cardNumberID)
 	err := row.Scan(&cardNumberID)
 	return err == nil
@@ -67,7 +67,7 @@ func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
 
 func (r *repository) Save(ctx context.Context, e domain.Employee) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO "main"."employees"("card_number_id","first_name","last_name","warehouse_id") VALUES (?,?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO employees("card_number_id","first_name","last_name","warehouse_id") VALUES (?,?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,12 +86,12 @@ func (r *repository) Save(ctx context.Context, e domain.Employee) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, e domain.Employee) error {
-	stmt, err := r.db.Prepare(`UPDATE "main"."employees" SET "first_name"=?, "last_name"=?, "warehouse_id"=?  WHERE "card_number_id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE employees SET "first_name"=?, "last_name"=?, "warehouse_id"=?  WHERE "id"=?`)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(&e.FirstName, &e.LastName, &e.WarehouseID, &e.CardNumberID)
+	res, err := stmt.Exec(&e.FirstName, &e.LastName, &e.WarehouseID, &e.ID)
 	if err != nil {
 		return err
 	}
@@ -108,7 +108,7 @@ func (r *repository) Update(ctx context.Context, e domain.Employee) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	stmt, err := r.db.Prepare(`DELETE FROM "main"."employees" WHERE id=?`)
+	stmt, err := r.db.Prepare(`DELETE FROM employees WHERE id=?`)
 	if err != nil {
 		return err
 	}
