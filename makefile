@@ -32,6 +32,6 @@ start:
 build-database:
 	@mysql -u $(u) -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
 	@mysql -u $(u) -p$(p) melisprint < db.sql
-	@mysql -u $(u) -p$(p) -e "CREATE USER 'meli_sprint_user'@'localhost' IDENTIFIED BY 'y#BQT042'"
+	@mysql -u $(u) -p$(p) -e "CREATE USER 'meli_sprint_user'@'localhost' IDENTIFIED BY 'Meli_Sprint#123'"
 	@mysql -u $(u) -p$(p) -e "GRANT ALL PRIVILEGES ON * . * TO 'meli_sprint_user'@'localhost'"
 	@mysql -u $(u) -p$(p) -e "FLUSH PRIVILEGES"
