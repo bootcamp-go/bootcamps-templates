@@ -67,7 +67,7 @@ func (r *repository) Exists(ctx context.Context, cid int) bool {
 
 func (r *repository) Save(ctx context.Context, s domain.Seller) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO sellers("cid","company_name","address","telephone","locality_id") VALUES (?,?,?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO sellers(cid,company_name,address,telephone,locality_id) VALUES (?,?,?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +86,7 @@ func (r *repository) Save(ctx context.Context, s domain.Seller) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, s domain.Seller) error {
-	stmt, err := r.db.Prepare(`UPDATE sellers SET "cid"=?, "company_name"=?, "address"=?, "telephone"=?, "locality_id"=?  WHERE "id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE sellers SET cid=?, company_name=?, address=?, telephone=?, locality_id=?  WHERE id=?`)
 	if err != nil {
 		return err
 	}
@@ -100,8 +100,9 @@ func (r *repository) Update(ctx context.Context, s domain.Seller) error {
 	if err != nil {
 		return err
 	}
+
 	if affect < 1 {
-		return errors.New("seller not found")
+		return ErrNotFound
 	}
 
 	return nil

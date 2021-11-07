@@ -22,16 +22,8 @@ func Response(c *gin.Context, status int, data interface{}) {
 	c.JSON(status, data)
 }
 
-func OK(c *gin.Context, data interface{}) {
-	Response(c, http.StatusOK, response{Data: data})
-}
-
-func Created(c *gin.Context, data interface{}) {
-	Response(c, http.StatusCreated, response{Data: data})
-}
-
-func NoContent(c *gin.Context) {
-	Response(c, http.StatusNoContent, response{})
+func Success(c *gin.Context, status int, data interface{}) {
+	Response(c, status, response{Data: data})
 }
 
 // NewErrorf creates a new error with the given status code and the message

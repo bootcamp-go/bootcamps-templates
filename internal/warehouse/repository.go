@@ -59,7 +59,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Warehouse, error) 
 }
 
 func (r *repository) Exists(ctx context.Context, warehouseCode string) bool {
-	sqlStatement := `SELECT warehouse_code FROM warehouses WHERE "warehouse_code"=?;`
+	sqlStatement := `SELECT warehouse_code FROM warehouses WHERE warehouse_code=?;`
 	row := r.db.QueryRow(sqlStatement, warehouseCode)
 	err := row.Scan(&warehouseCode)
 	return err == nil
@@ -67,7 +67,7 @@ func (r *repository) Exists(ctx context.Context, warehouseCode string) bool {
 
 func (r *repository) Save(ctx context.Context, w domain.Warehouse) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO warehouses("address","telephone","warehouse_code","minimun_capacity","minimun_temperature", "section_number") VALUES (?,?,?,?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO warehouses(address,telephone,warehouse_code,minimun_capacity,minimun_temperature, section_number) VALUES (?,?,?,?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +86,7 @@ func (r *repository) Save(ctx context.Context, w domain.Warehouse) (int, error) 
 }
 
 func (r *repository) Update(ctx context.Context, w domain.Warehouse) error {
-	stmt, err := r.db.Prepare(`UPDATE warehouses SET "address"=?, "telephone"=?, "warehouse_code"=?, "minimun_capacity"=?, "minimun_temperature"=?, "section_number"=?  WHERE "id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE warehouses SET address=?, telephone=?, warehouse_code=?, minimun_capacity=?, minimun_temperature=?, section_number=?  WHERE id=?`)
 	if err != nil {
 		return err
 	}
@@ -100,8 +100,9 @@ func (r *repository) Update(ctx context.Context, w domain.Warehouse) error {
 	if err != nil {
 		return err
 	}
+
 	if affect < 1 {
-		return errors.New("warehouse not found")
+		return ErrNotFound
 	}
 
 	return nil

@@ -1,29 +1,22 @@
 package main
 
 import (
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/usuario/repositorio/cmd/server/routes"
 )
 
 func main() {
 
-	// db, _ := sql.Open("mysql", "root:root@/meli")
-	router := gin.Default()
+	db, _ := sql.Open("mysql", "meli_sprint_user:y#BQT042@/melisprint")
+	r := gin.Default()
 
-	// Codigo de ayuda
-	// warehouseRepository := warehouse.NewRepository(db)
-	// warehouseService := warehouse.NewService(warehouseRepository)
-	// warehouseHandler := handler.NewWarehouse(warehouseService)
-	// warehousesRoutes := router.Group("/api/v1/warehouses")
-	// {
-	// 	warehousesRoutes.GET("/", warehouseHandler.GetAll())
-	// 	warehousesRoutes.GET("/:id", warehouseHandler.Get())
-	// 	warehousesRoutes.POST("/", warehouseHandler.Store())
-	// 	warehousesRoutes.PATCH("/:id", warehouseHandler.Update())
-	// 	warehousesRoutes.DELETE("/:id", warehouseHandler.Delete())
-	// }
+	router := routes.NewRouter(r, db)
+	router.MapRoutes()
 
-	if err := router.Run(); err != nil {
+	if err := r.Run(); err != nil {
 		panic(err)
 	}
 }

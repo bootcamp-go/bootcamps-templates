@@ -67,7 +67,7 @@ func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
 
 func (r *repository) Save(ctx context.Context, e domain.Employee) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO employees("card_number_id","first_name","last_name","warehouse_id") VALUES (?,?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO employees(card_number_id,first_name,last_name,warehouse_id) VALUES (?,?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +86,7 @@ func (r *repository) Save(ctx context.Context, e domain.Employee) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, e domain.Employee) error {
-	stmt, err := r.db.Prepare(`UPDATE employees SET "first_name"=?, "last_name"=?, "warehouse_id"=?  WHERE "id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE employees SET first_name=?, last_name=?, warehouse_id=?  WHERE id=?`)
 	if err != nil {
 		return err
 	}
@@ -100,8 +100,9 @@ func (r *repository) Update(ctx context.Context, e domain.Employee) error {
 	if err != nil {
 		return err
 	}
+
 	if affect < 1 {
-		return errors.New("employee not found")
+		return ErrNotFound
 	}
 
 	return nil

@@ -3,7 +3,6 @@ package buyer
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/usuario/repositorio/internal/domain"
 )
@@ -67,7 +66,7 @@ func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
 
 func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO buyers("card_number_id","first_name","last_name") VALUES (?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO buyers(card_number_id,first_name,last_name) VALUES (?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +85,7 @@ func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
-	stmt, err := r.db.Prepare(`UPDATE buyers SET "first_name"=?, "last_name"=?  WHERE "id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE buyers SET first_name=?, last_name=?  WHERE id=?`)
 	if err != nil {
 		return err
 	}
@@ -100,8 +99,9 @@ func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
 	if err != nil {
 		return err
 	}
+
 	if affect < 1 {
-		return errors.New("buyer not found")
+		return ErrNotFound
 	}
 
 	return nil
@@ -124,7 +124,7 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return errors.New("buyer not found")
+		return ErrNotFound
 	}
 
 	return nil

@@ -67,7 +67,7 @@ func (r *repository) Exists(ctx context.Context, productCode string) bool {
 
 func (r *repository) Save(ctx context.Context, p domain.Product) (int, error) {
 
-	stmt, err := r.db.Prepare(`INSERT INTO products("description","expiration_rate","freezing_rate","height","lenght","netweight","product_code","recommended_freezing_temperature","width","id_product_type","id_seller") VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+	stmt, err := r.db.Prepare(`INSERT INTO products(description,expiration_rate,freezing_rate,height,lenght,netweight,product_code,recommended_freezing_temperature,width,id_product_type,id_seller) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +86,7 @@ func (r *repository) Save(ctx context.Context, p domain.Product) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, p domain.Product) error {
-	stmt, err := r.db.Prepare(`UPDATE products SET "description"=?, "expiration_rate"=?, "freezing_rate"=?, "height"=?, "lenght"=?, "netweight"=?, "product_code"=?, "recommended_freezing_temperature"=?, "width"=?, "id_product_type"=?, "id_seller"=?  WHERE "id"=?`)
+	stmt, err := r.db.Prepare(`UPDATE products SET description=?, expiration_rate=?, freezing_rate=?, height=?, lenght=?, netweight=?, product_code=?, recommended_freezing_temperature=?, width=?, id_product_type=?, id_seller=?  WHERE id=?`)
 	if err != nil {
 		return err
 	}
@@ -100,8 +100,9 @@ func (r *repository) Update(ctx context.Context, p domain.Product) error {
 	if err != nil {
 		return err
 	}
+
 	if affect < 1 {
-		return errors.New("product not found")
+		return ErrNotFound
 	}
 
 	return nil
