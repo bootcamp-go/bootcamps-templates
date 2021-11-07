@@ -3,7 +3,6 @@ package section
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/usuario/repositorio/internal/domain"
 )
@@ -29,7 +28,8 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Section, error) {
-	rows, err := r.db.Query(`SELECT * FROM sections`)
+	query := "SELECT * FROM sections;"
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -46,9 +46,8 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Section, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Section, error) {
-
-	sqlStatement := `SELECT * FROM sections WHERE id=?;`
-	row := r.db.QueryRow(sqlStatement, id)
+	query := "SELECT * FROM sections WHERE id=?;"
+	row := r.db.QueryRow(query, id)
 	s := domain.Section{}
 	err := row.Scan(&s.ID, &s.SectionNumber, &s.CurrentTemperature, &s.MinimumTemperature, &s.CurrentCapacity, &s.MinimumCapacity, &s.MaximumCapacity, &s.WarehouseID, &s.ProductTypeID)
 	if err != nil {
@@ -59,15 +58,15 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Section, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, sectionNumber int) bool {
-	sqlStatement := `SELECT section_number FROM sections WHERE section_number=?;`
-	row := r.db.QueryRow(sqlStatement, sectionNumber)
+	query := "SELECT section_number FROM sections WHERE section_number=?;"
+	row := r.db.QueryRow(query, sectionNumber)
 	err := row.Scan(&sectionNumber)
 	return err == nil
 }
 
 func (r *repository) Save(ctx context.Context, s domain.Section) (int, error) {
-
-	stmt, err := r.db.Prepare(`INSERT INTO sections(section_number,current_temperature,minimum_temperature,current_capacity,minimum_capacity, maximum_capacity, warehouse_id, product_type_id) VALUES (?,?,?,?,?,?,?,?)`)
+	query := "INSERT INTO sections (section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, product_type_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +85,8 @@ func (r *repository) Save(ctx context.Context, s domain.Section) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, s domain.Section) error {
-	stmt, err := r.db.Prepare(`UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, product_type_id=?  WHERE id=?`)
+	query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, product_type_id=? WHERE id=?;"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,8 @@ func (r *repository) Update(ctx context.Context, s domain.Section) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	stmt, err := r.db.Prepare(`DELETE FROM sections WHERE id=?`)
+	query := "DELETE FROM sections WHERE id=?;"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -125,7 +126,7 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return errors.New("section not found")
+		return ErrNotFound
 	}
 
 	return nil

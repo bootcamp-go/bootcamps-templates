@@ -3,7 +3,6 @@ package seller
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/usuario/repositorio/internal/domain"
 )
@@ -29,7 +28,8 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Seller, error) {
-	rows, err := r.db.Query(`SELECT * FROM sellers`)
+	query := "SELECT * FROM sellers"
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -46,9 +46,8 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Seller, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Seller, error) {
-
-	sqlStatement := `SELECT * FROM sellers WHERE id=?;`
-	row := r.db.QueryRow(sqlStatement, id)
+	query := "SELECT * FROM sellers WHERE id=?;"
+	row := r.db.QueryRow(query, id)
 	s := domain.Seller{}
 	err := row.Scan(&s.ID, &s.CID, &s.CompanyName, &s.Address, &s.Telephone, &s.LocalityID)
 	if err != nil {
@@ -59,15 +58,15 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Seller, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, cid int) bool {
-	sqlStatement := `SELECT cid FROM sellers WHERE cid=?;`
-	row := r.db.QueryRow(sqlStatement, cid)
+	query := "SELECT cid FROM sellers WHERE cid=?;"
+	row := r.db.QueryRow(query, cid)
 	err := row.Scan(&cid)
 	return err == nil
 }
 
 func (r *repository) Save(ctx context.Context, s domain.Seller) (int, error) {
-
-	stmt, err := r.db.Prepare(`INSERT INTO sellers(cid,company_name,address,telephone,locality_id) VALUES (?,?,?,?,?)`)
+	query := "INSERT INTO sellers (cid, company_name, address, telephone, locality_id) VALUES (?, ?, ?, ?, ?)"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +85,8 @@ func (r *repository) Save(ctx context.Context, s domain.Seller) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, s domain.Seller) error {
-	stmt, err := r.db.Prepare(`UPDATE sellers SET cid=?, company_name=?, address=?, telephone=?, locality_id=?  WHERE id=?`)
+	query := "UPDATE sellers SET cid=?, company_name=?, address=?, telephone=?, locality_id=? WHERE id=?"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,8 @@ func (r *repository) Update(ctx context.Context, s domain.Seller) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	stmt, err := r.db.Prepare(`DELETE FROM sellers WHERE id=?`)
+	query := "DELETE FROM sellers WHERE id=?"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -125,7 +126,7 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return errors.New("seller not found")
+		return ErrNotFound
 	}
 
 	return nil

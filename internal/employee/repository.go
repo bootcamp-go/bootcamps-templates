@@ -3,7 +3,6 @@ package employee
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/usuario/repositorio/internal/domain"
 )
@@ -29,7 +28,8 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Employee, error) {
-	rows, err := r.db.Query(`SELECT * FROM employees`)
+	query := "SELECT * FROM employees"
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -46,9 +46,8 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Employee, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Employee, error) {
-
-	sqlStatement := `SELECT * FROM employees WHERE id=?;`
-	row := r.db.QueryRow(sqlStatement, id)
+	query := "SELECT * FROM employees WHERE id=?;"
+	row := r.db.QueryRow(query, id)
 	e := domain.Employee{}
 	err := row.Scan(&e.ID, &e.CardNumberID, &e.FirstName, &e.LastName, &e.WarehouseID)
 	if err != nil {
@@ -59,15 +58,15 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Employee, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
-	sqlStatement := `SELECT card_number_id FROM employees WHERE card_number_id=?;`
-	row := r.db.QueryRow(sqlStatement, cardNumberID)
+	query := "SELECT card_number_id FROM employees WHERE card_number_id=?;"
+	row := r.db.QueryRow(query, cardNumberID)
 	err := row.Scan(&cardNumberID)
 	return err == nil
 }
 
 func (r *repository) Save(ctx context.Context, e domain.Employee) (int, error) {
-
-	stmt, err := r.db.Prepare(`INSERT INTO employees(card_number_id,first_name,last_name,warehouse_id) VALUES (?,?,?,?)`)
+	query := "INSERT INTO employees(card_number_id,first_name,last_name,warehouse_id) VALUES (?,?,?,?)"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +85,8 @@ func (r *repository) Save(ctx context.Context, e domain.Employee) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, e domain.Employee) error {
-	stmt, err := r.db.Prepare(`UPDATE employees SET first_name=?, last_name=?, warehouse_id=?  WHERE id=?`)
+	query := "UPDATE employees SET first_name=?, last_name=?, warehouse_id=?  WHERE id=?"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,8 @@ func (r *repository) Update(ctx context.Context, e domain.Employee) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	stmt, err := r.db.Prepare(`DELETE FROM employees WHERE id=?`)
+	query := "DELETE FROM employees WHERE id=?"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -125,7 +126,7 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return errors.New("employee not found")
+		return ErrNotFound
 	}
 
 	return nil

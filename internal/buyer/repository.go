@@ -28,7 +28,8 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
-	rows, err := r.db.Query(`SELECT * FROM buyers`)
+	query := "SELECT * FROM buyers"
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +46,8 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Buyer, error) {
-
-	sqlStatement := `SELECT * FROM buyers WHERE id = ?;`
-	row := r.db.QueryRow(sqlStatement, id)
+	query := "SELECT * FROM buyers WHERE id = ?;"
+	row := r.db.QueryRow(query, id)
 	b := domain.Buyer{}
 	err := row.Scan(&b.ID, &b.CardNumberID, &b.FirstName, &b.LastName)
 	if err != nil {
@@ -58,15 +58,15 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Buyer, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
-	sqlStatement := `SELECT card_number_id FROM buyers WHERE card_number_id=?;`
-	row := r.db.QueryRow(sqlStatement, cardNumberID)
+	query := "SELECT card_number_id FROM buyers WHERE card_number_id=?;"
+	row := r.db.QueryRow(query, cardNumberID)
 	err := row.Scan(&cardNumberID)
 	return err == nil
 }
 
 func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
-
-	stmt, err := r.db.Prepare(`INSERT INTO buyers(card_number_id,first_name,last_name) VALUES (?,?,?)`)
+	query := "INSERT INTO buyers(card_number_id,first_name,last_name) VALUES (?,?,?)"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
@@ -85,7 +85,8 @@ func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
-	stmt, err := r.db.Prepare(`UPDATE buyers SET first_name=?, last_name=?  WHERE id=?`)
+	query := "UPDATE buyers SET first_name=?, last_name=?  WHERE id=?"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
@@ -108,7 +109,8 @@ func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	stmt, err := r.db.Prepare(`DELETE FROM buyers WHERE id = ?`)
+	query := "DELETE FROM buyers WHERE id = ?"
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
