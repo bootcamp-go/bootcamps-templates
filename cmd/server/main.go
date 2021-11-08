@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	db, _ := sql.Open("mysql", "meli_sprint_user:Meli_Sprint#123/melisprint")
+	db, _ := sql.Open("mysql", "meli_sprint_user:Meli_Sprint#123@/melisprint")
 	r := gin.Default()
 
 	router := routes.NewRouter(r, db)
