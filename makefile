@@ -30,15 +30,12 @@ start:
 
 .PHONY: build-database
 build-database:
-	@mysql -u root -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
-	@mysql -u root -p$(p) melisprint < db.sql
-	@mysql -u root -p$(p) -e "CREATE USER 'meli_sprint_user'@'localhost' IDENTIFIED BY 'Meli_Sprint#123'"
-	@mysql -u root -p$(p) -e "GRANT ALL PRIVILEGES ON * . * TO 'meli_sprint_user'@'localhost'"
-	@mysql -u root -p$(p) -e "FLUSH PRIVILEGES"
+	@echo "MysqlRoot Passowrd (if don't have ignore): "; \
+    read PASS; \
+    curl -s https://raw.githubusercontent.com/bootcamp-go/bootcamps-scripts/main/meli_database.sh | bash  -s create $$PASS
 
 .PHONY: rebuild-database
 rebuild-database:
-	@mysql -u root -p$(p) -e "DROP DATABASE IF EXISTS melisprint"
-	@mysql -u root -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
-	@mysql -u root -p$(p) melisprint < db.sql
-	@mysql -u root -p$(p) -e "FLUSH PRIVILEGES"
+	@echo "MysqlRoot Passowrd (if don't have ignore): "; \
+    read PASS; \
+    curl -s https://raw.githubusercontent.com/bootcamp-go/bootcamps-scripts/main/meli_database.sh | bash  -s rebuild $$PASS
