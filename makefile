@@ -30,15 +30,15 @@ start:
 
 .PHONY: build-database
 build-database:
-	@mysql -u $(u) -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
-	@mysql -u $(u) -p$(p) melisprint < db.sql
-	@mysql -u $(u) -p$(p) -e "CREATE USER 'meli_sprint_user'@'localhost' IDENTIFIED BY 'Meli_Sprint#123'"
-	@mysql -u $(u) -p$(p) -e "GRANT ALL PRIVILEGES ON * . * TO 'meli_sprint_user'@'localhost'"
-	@mysql -u $(u) -p$(p) -e "FLUSH PRIVILEGES"
+	@mysql -u root -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
+	@mysql -u root -p$(p) melisprint < db.sql
+	@mysql -u root -p$(p) -e "CREATE USER 'meli_sprint_user'@'localhost' IDENTIFIED BY 'Meli_Sprint#123'"
+	@mysql -u root -p$(p) -e "GRANT ALL PRIVILEGES ON * . * TO 'meli_sprint_user'@'localhost'"
+	@mysql -u root -p$(p) -e "FLUSH PRIVILEGES"
 
 .PHONY: rebuild-database
 rebuild-database:
-	@mysql -u $(u) -p$(p) -e "DROP DATABASE IF EXISTS melisprint"
-	@mysql -u $(u) -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
-	@mysql -u $(u) -p$(p) melisprint < db.sql
-	@mysql -u $(u) -p$(p) -e "FLUSH PRIVILEGES"
+	@mysql -u root -p$(p) -e "DROP DATABASE IF EXISTS melisprint"
+	@mysql -u root -p$(p) -e "CREATE DATABASE IF NOT EXISTS melisprint"
+	@mysql -u root -p$(p) melisprint < db.sql
+	@mysql -u root -p$(p) -e "FLUSH PRIVILEGES"
