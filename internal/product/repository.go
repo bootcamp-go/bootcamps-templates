@@ -96,13 +96,9 @@ func (r *repository) Update(ctx context.Context, p domain.Product) error {
 		return err
 	}
 
-	affect, err := res.RowsAffected()
+	_, err = res.RowsAffected()
 	if err != nil {
 		return err
-	}
-
-	if affect < 1 {
-		return ErrNotFound
 	}
 
 	return nil
