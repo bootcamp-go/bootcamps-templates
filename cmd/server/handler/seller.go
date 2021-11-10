@@ -22,7 +22,7 @@ func (s *Seller) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {}
 }
 
-func (s *Seller) Store() gin.HandlerFunc {
+func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {}
 }
 
