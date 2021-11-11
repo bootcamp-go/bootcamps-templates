@@ -38,7 +38,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Seller, error) {
 
 	for rows.Next() {
 		s := domain.Seller{}
-		_ = rows.Scan(&s.ID, &s.CID, &s.CompanyName, &s.Address, &s.Telephone, &s.LocalityID)
+		_ = rows.Scan(&s.ID, &s.CID, &s.CompanyName, &s.Address, &s.Telephone)
 		sellers = append(sellers, s)
 	}
 
@@ -49,7 +49,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Seller, error) {
 	query := "SELECT * FROM sellers WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	s := domain.Seller{}
-	err := row.Scan(&s.ID, &s.CID, &s.CompanyName, &s.Address, &s.Telephone, &s.LocalityID)
+	err := row.Scan(&s.ID, &s.CID, &s.CompanyName, &s.Address, &s.Telephone)
 	if err != nil {
 		return domain.Seller{}, err
 	}
@@ -65,13 +65,13 @@ func (r *repository) Exists(ctx context.Context, cid int) bool {
 }
 
 func (r *repository) Save(ctx context.Context, s domain.Seller) (int, error) {
-	query := "INSERT INTO sellers (cid, company_name, address, telephone, locality_id) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO sellers (cid, company_name, address, telephone) VALUES (?, ?, ?, ?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
 
-	res, err := stmt.Exec(s.CID, s.CompanyName, s.Address, s.Telephone, s.LocalityID)
+	res, err := stmt.Exec(s.CID, s.CompanyName, s.Address, s.Telephone)
 	if err != nil {
 		return 0, err
 	}
@@ -85,13 +85,13 @@ func (r *repository) Save(ctx context.Context, s domain.Seller) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, s domain.Seller) error {
-	query := "UPDATE sellers SET cid=?, company_name=?, address=?, telephone=?, locality_id=? WHERE id=?"
+	query := "UPDATE sellers SET cid=?, company_name=?, address=?, telephone=? WHERE id=?"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(s.CID, s.CompanyName, s.Address, s.Telephone, s.LocalityID, s.ID)
+	res, err := stmt.Exec(s.CID, s.CompanyName, s.Address, s.Telephone, s.ID)
 	if err != nil {
 		return err
 	}
