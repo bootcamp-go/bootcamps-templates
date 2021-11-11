@@ -38,7 +38,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Warehouse, error) {
 
 	for rows.Next() {
 		w := domain.Warehouse{}
-		_ = rows.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature)
+		_ = rows.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature)
 		warehouses = append(warehouses, w)
 	}
 
@@ -49,7 +49,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Warehouse, error) 
 	query := "SELECT * FROM warehouses WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	w := domain.Warehouse{}
-	err := row.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature)
+	err := row.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature)
 	if err != nil {
 		return domain.Warehouse{}, err
 	}
@@ -65,13 +65,13 @@ func (r *repository) Exists(ctx context.Context, warehouseCode string) bool {
 }
 
 func (r *repository) Save(ctx context.Context, w domain.Warehouse) (int, error) {
-	query := "INSERT INTO warehouses (address, telephone, warehouse_code, minimun_capacity, minimun_temperature) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO warehouses (address, telephone, warehouse_code, minimum_capacity, minimum_temperature) VALUES (?, ?, ?, ?, ?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
 
-	res, err := stmt.Exec(&w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature)
+	res, err := stmt.Exec(&w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature)
 	if err != nil {
 		return 0, err
 	}
@@ -85,13 +85,13 @@ func (r *repository) Save(ctx context.Context, w domain.Warehouse) (int, error) 
 }
 
 func (r *repository) Update(ctx context.Context, w domain.Warehouse) error {
-	query := "UPDATE warehouses SET address=?, telephone=?, warehouse_code=?, minimun_capacity=?, minimun_temperature=? WHERE id=?"
+	query := "UPDATE warehouses SET address=?, telephone=?, warehouse_code=?, minimum_capacity=?, minimum_temperature=? WHERE id=?"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(&w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimunCapacity, &w.MinimunTemperature, &w.ID)
+	res, err := stmt.Exec(&w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature, &w.ID)
 	if err != nil {
 		return err
 	}

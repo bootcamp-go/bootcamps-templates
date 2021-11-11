@@ -24,8 +24,8 @@ create table warehouses(
     `address` text null,
     telephone text null,
     warehouse_code text null,
-    minimun_capacity int null,
-    minimun_temperature int null,
+    minimum_capacity int null,
+    minimum_temperature int null
 );
 create table sections(
     `id` int not null primary key auto_increment,
