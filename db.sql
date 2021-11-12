@@ -1,14 +1,14 @@
 create table products(
     `id` int not null primary key auto_increment,
     `description` text not null,
-    expiration_rate int not null,
-    freezing_rate int not null,
-    height int not null,
-    lenght int not null,
-    netweight int not null,
+    expiration_rate float not null,
+    freezing_rate float not null,
+    height float not null,
+    lenght float not null,
+    netweight float not null,
     product_code text not null,
-    recommended_freezing_temperature int not null,
-    width int not null,
+    recommended_freezing_temperature float not null,
+    width float not null,
     id_product_type int not null,
     id_seller int not null
 );
