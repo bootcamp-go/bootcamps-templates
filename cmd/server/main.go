@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-
+	// NO MODIFICAR
 	db, _ := sql.Open("mysql", "meli_sprint_user:Meli_Sprint#123@/melisprint")
 	r := gin.Default()
 
