@@ -22,6 +22,5 @@ rebuild-database:
 
 .PHONY: rebuild-database-with-password	
 rebuild-database-with-password:
-	@echo "MysqlRoot Passowrd (if don't have ignore): "; \
-    read PASS; \
+	@echo "Rebuilding database"; \
     curl -s https://raw.githubusercontent.com/bootcamp-go/bootcamps-scripts/main/meli_database.sh | bash  -s rebuild ${p}
