@@ -1,8 +1,7 @@
-
 PACKAGES_PATH = $(shell go list -f '{{ .Dir }}' ./...)
 
 .PHONY: all
-all: ensure-deps fmt imports test
+all: ensure-deps fmt test
 
 .PHONY: ensure-deps
 ensure-deps:
@@ -14,11 +13,6 @@ fmt:
 	@echo "=> Executing go fmt"
 	@go fmt ./...
 
-.PHONY: imports
-imports:
-	@echo "=> Executing goimports"
-	@goimports -w $(PACKAGES_PATH)
-
 .PHONY: test
 test:
 	@echo "=> Running tests"
@@ -27,9 +21,20 @@ test:
 .PHONY: test-cover
 test-cover:
 	@echo "=> Running tests and generating report"
-	@go test ./... -covermode=atomic -coverprofile=/tmp/coverage.out -coverpkg=./... -count=1
-	@go tool cover -html=/tmp/coverage.out
+	@go test ./... -covermode=atomic -coverprofile=./coverage.out -coverpkg=./... -count=1
+	@go tool cover -html=./coverage.out
 
 .PHONY: start
 start:
 	@go run cmd/server/main.go
+
+.PHONY: build-database
+build-database:
+	@echo "MysqlRoot Passowrd (if don't have ignore): "; \
+    read PASS; \
+    curl -s https://raw.githubusercontent.com/bootcamp-go/bootcamps-scripts/main/meli_database.sh | bash  -s create $$PASS
+
+.PHONY: rebuild-database-with-password
+rebuild-database-with-password:
+	@echo "MysqlRoot Passowrd (if don't have ignore): "; \
+    curl -s https://raw.githubusercontent.com/bootcamp-go/bootcamps-scripts/main/meli_database.sh | bash  -s rebuild ${p}
