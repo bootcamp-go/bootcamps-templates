@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"database/sql"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,11 +13,10 @@ type Router interface {
 type router struct {
 	r  *gin.Engine
 	rg *gin.RouterGroup
-	db *sql.DB
 }
 
-func NewRouter(r *gin.Engine, db *sql.DB) Router {
-	return &router{r: r, db: db}
+func NewRouter(r *gin.Engine) Router {
+	return &router{r: r}
 }
 
 func (r *router) MapRoutes() {
@@ -37,7 +36,8 @@ func (r *router) setGroup() {
 
 func (r *router) buildSellerRoutes() {
 	// Example
-	// repo := seller.NewRepository(r.db)
+	//db := database.NewDatabase[domain.Seller](getDatabaseFile("seller"))
+	// repo := seller.NewRepository(db)
 	// service := seller.NewService(repo)
 	// handler := handler.NewSeller(service)
 	// r.r.GET("/seller", handler.GetAll)
@@ -52,3 +52,8 @@ func (r *router) buildWarehouseRoutes() {}
 func (r *router) buildEmployeeRoutes() {}
 
 func (r *router) buildBuyerRoutes() {}
+
+// DO NOT MODIFY
+func getDatabaseFile(entity string) string {
+	return fmt.Sprintf("./databases/%s.json", entity)
+}

@@ -3,6 +3,17 @@ PACKAGES_PATH = $(shell go list -f '{{ .Dir }}' ./...)
 .PHONY: all
 all: ensure-deps fmt test
 
+.PHONY: create-json-databases
+create-json-databases:
+	@echo "Creating JSON databases..."
+	@mkdir databases
+	@touch databases/product.json
+	@touch databases/seller.json
+	@touch databases/buyer.json
+	@touch databases/warehouse.json
+	@touch databases/employee.json
+	@touch databases/section.json
+
 .PHONY: ensure-deps
 ensure-deps:
 	@echo "=> Syncing dependencies with go mod tidy"
