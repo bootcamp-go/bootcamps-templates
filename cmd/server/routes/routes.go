@@ -36,7 +36,7 @@ func (r *router) setGroup() {
 
 func (r *router) buildSellerRoutes() {
 	// Example
-	//db := database.NewDatabase[domain.Seller](getDatabaseFile("seller"))
+	//db := database.NewDatabase(getDatabaseFile("seller"))
 	// repo := seller.NewRepository(db)
 	// service := seller.NewService(repo)
 	// handler := handler.NewSeller(service)

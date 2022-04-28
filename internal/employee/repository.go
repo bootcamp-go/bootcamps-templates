@@ -18,10 +18,10 @@ type Repository interface {
 }
 
 type repository struct {
-	db database.Database[domain.Employee]
+	db database.Database
 }
 
-func NewRepository(db database.Database[domain.Employee]) Repository {
+func NewRepository(db database.Database) Repository {
 	return &repository{
 		db: db,
 	}

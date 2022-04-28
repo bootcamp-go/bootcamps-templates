@@ -25,21 +25,23 @@ func TestMain(m *testing.M) {
 	os.Remove("/tmp/test_db.json")
 }
 
-func getDB[T any]() Database[T] {
-	return NewDatabase[T]("/tmp/test_db.json")
+func getDB() Database {
+	return NewDatabase("/tmp/test_db.json")
 }
 
 // Test Store
 func TestStoreAndGet(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
+	db := getDB()
 	td := TestData{ID: 1, Name: "test", Age: 10, Valid: true}
 	err := db.Store(td)
 	if err != nil {
 		t.Errorf("Error storing data: %s", err)
 	}
 
-	tdr, err := db.Get("id", "1")
+	tdr := new(TestData)
+
+	err = db.Get("id", "1", tdr)
 	if err != nil {
 		t.Errorf("Error getting data: %s", err)
 	}
@@ -64,7 +66,7 @@ func TestStoreAndGet(t *testing.T) {
 // Test GetAll
 func TestGetAll(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
+	db := getDB()
 	td := TestData{ID: 1, Name: "test", Age: 10, Valid: true}
 	td2 := TestData{ID: 2, Name: "test2", Age: 20, Valid: true}
 	err := db.Store(td)
@@ -77,7 +79,9 @@ func TestGetAll(t *testing.T) {
 		t.Errorf("Error storing data: %s", err)
 	}
 
-	tds, err := db.GetAll()
+	var tds []TestData
+
+	err = db.GetAll(&tds)
 	if err != nil {
 		t.Errorf("Error getting data: %s", err)
 	}
@@ -106,7 +110,7 @@ func TestGetAll(t *testing.T) {
 // Test Update
 func TestUpdate(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
+	db := getDB()
 	td := TestData{ID: 1, Name: "test", Age: 10, Valid: true}
 	err := db.Store(td)
 	if err != nil {
@@ -119,7 +123,9 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("Error updating data: %s", err)
 	}
 
-	tdr, err := db.Get("id", "1")
+	tdr := new(TestData)
+
+	err = db.Get("id", "1", tdr)
 	if err != nil {
 		t.Errorf("Error getting data: %s", err)
 	}
@@ -144,7 +150,7 @@ func TestUpdate(t *testing.T) {
 // Test Delete
 func TestDelete(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
+	db := getDB()
 	td := TestData{ID: 1, Name: "test", Age: 10, Valid: true}
 	err := db.Store(td)
 	if err != nil {
@@ -162,12 +168,14 @@ func TestDelete(t *testing.T) {
 		t.Errorf("Error deleting data: %s", err)
 	}
 
-	_, err = db.Get("id", "1")
+	err = db.Get("id", "1", nil)
 	if err == nil {
 		t.Errorf("Expected error getting data, got nil")
 	}
 
-	tds, err := db.GetAll()
+	var tds []TestData
+
+	err = db.GetAll(&tds)
 	if err != nil {
 		t.Errorf("Error getting data: %s", err)
 	}
@@ -179,8 +187,10 @@ func TestDelete(t *testing.T) {
 
 func TestGetNotFound(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
-	_, err := db.Get("id", "999")
+	db := getDB()
+	tdr := new(TestData)
+
+	err := db.Get("id", "1", tdr)
 	if err == nil {
 		t.Errorf("Expected error getting data, got nil")
 	}
@@ -188,7 +198,7 @@ func TestGetNotFound(t *testing.T) {
 
 func TestUpdateNotFound(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
+	db := getDB()
 	td := TestData{ID: 1, Name: "test", Age: 10, Valid: true}
 	err := db.Update("id", "999", td)
 	if err == nil {
@@ -198,7 +208,7 @@ func TestUpdateNotFound(t *testing.T) {
 
 func TestDeleteNotFound(t *testing.T) {
 	reset()
-	db := getDB[TestData]()
+	db := getDB()
 	err := db.Delete("id", "999")
 	if err == nil {
 		t.Errorf("Expected error deleting data, got nil")
