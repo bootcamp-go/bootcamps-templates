@@ -51,6 +51,7 @@ jobs:
           sudo /etc/init.d/mysql start
           make rebuild-database-with-password p=root
       - name: Start go server
+        timeout-minutes: 1
         run: |
           nohup make start & \
           while [ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080)" != "404" ]; do sleep 1; done
@@ -66,6 +67,7 @@ jobs:
           path: './tests'
 
       - name: Run tests
+        timeout-minutes: 5
         run: go-regression --base http://127.0.0.1:8080/api/v1 --path ./tests/wave-${{ github.event.inputs.wave }}/sprint-${{ github.event.inputs.sprint }} -- wave=${{ github.event.inputs.wave }} sprint=${{ github.event.inputs.sprint }} group=${{ github.event.inputs.group }} company=${{ github.event.inputs.company }}
 
       - name: Show JSON
