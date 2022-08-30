@@ -11,12 +11,12 @@ type Router interface {
 }
 
 type router struct {
-	r  *gin.Engine
-	rg *gin.RouterGroup
+	eng *gin.Engine
+	rg  *gin.RouterGroup
 }
 
-func NewRouter(r *gin.Engine) Router {
-	return &router{r: r}
+func NewRouter(eng *gin.Engine) Router {
+	return &router{eng: eng}
 }
 
 func (r *router) MapRoutes() {
@@ -31,7 +31,7 @@ func (r *router) MapRoutes() {
 }
 
 func (r *router) setGroup() {
-	r.rg = r.r.Group("/api/v1")
+	r.rg = r.eng.Group("/api/v1")
 }
 
 func (r *router) buildSellerRoutes() {
