@@ -10,13 +10,17 @@ import (
 
 func main() {
 	// NO MODIFICAR
-	db, _ := sql.Open("mysql", "meli_sprint_user:Meli_Sprint#123@/melisprint")
-	r := gin.Default()
+	db, err := sql.Open("mysql", "meli_sprint_user:Meli_Sprint#123@/melisprint")
+	if err != nil {
+		panic(err)
+	}
 
-	router := routes.NewRouter(r, db)
+	eng := gin.Default()
+
+	router := routes.NewRouter(eng, db)
 	router.MapRoutes()
 
-	if err := r.Run(); err != nil {
+	if err := eng.Run(); err != nil {
 		panic(err)
 	}
 }

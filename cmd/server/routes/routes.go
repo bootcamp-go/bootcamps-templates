@@ -11,13 +11,13 @@ type Router interface {
 }
 
 type router struct {
-	r  *gin.Engine
-	rg *gin.RouterGroup
-	db *sql.DB
+	eng *gin.Engine
+	rg  *gin.RouterGroup
+	db  *sql.DB
 }
 
-func NewRouter(r *gin.Engine, db *sql.DB) Router {
-	return &router{r: r, db: db}
+func NewRouter(eng *gin.Engine, db *sql.DB) Router {
+	return &router{eng: eng, db: db}
 }
 
 func (r *router) MapRoutes() {
@@ -32,7 +32,7 @@ func (r *router) MapRoutes() {
 }
 
 func (r *router) setGroup() {
-	r.rg = r.r.Group("/api/v1")
+	r.rg = r.eng.Group("/api/v1")
 }
 
 func (r *router) buildSellerRoutes() {
