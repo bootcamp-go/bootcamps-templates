@@ -25,13 +25,13 @@ create table warehouses(
     telephone text null,
     warehouse_code text null,
     minimum_capacity int null,
-    minimum_temperature int null
+    minimum_temperature float null
 );
 create table sections(
     `id` int not null primary key auto_increment,
     section_number int not null,
-    current_temperature int not null,
-    minimum_temperature int not null,
+    current_temperature float not null,
+    minimum_temperature float not null,
     current_capacity int not null,
     minimum_capacity int not null,
     maximum_capacity int not null,
