@@ -82,7 +82,7 @@ func (d *database) GetAll(data interface{}) error {
 
 	var dbd databaseData
 
-	err = json.Unmarshal(dd, &dbd)
+	err = json.Unmarshal(dd, &dbd.Data)
 	if err != nil {
 		return err
 	}
