@@ -1,0 +1,25 @@
+name: Greetings
+
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - main
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    name: Comment
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: 'Hola equipo!! Les deseo la mejor de las suertes en este sprint y en los próximos que vienen!! 🚀 '
+      - uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            Acuerdense de revisar bien todo 👀👀
+            Y que la fuerza te acompañe 😊
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens

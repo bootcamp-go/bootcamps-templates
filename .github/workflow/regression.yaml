@@ -1,0 +1,78 @@
+name: Regression
+on:
+  workflow_dispatch:
+    inputs:
+      wave:
+        description: 'Wave of the test'
+        type: string
+        required: true
+      sprint:
+        description: 'Sprint of the test'
+        type: string
+        required: true
+      company:
+        description: 'Company of the test'
+        type: string
+        required: true
+      group:
+        description: 'Group of the test'
+        type: string
+        required: true
+      token:
+        description: 'Token to clone the test'
+        type: string
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DB_USER: root
+      DB_PASSWORD: root
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.21
+
+      - name: Rebuild Database
+        run: |
+          sudo /etc/init.d/mysql start
+          make rebuild-database-with-password p=root
+      - name: Start go server
+        timeout-minutes: 1
+        run: |
+          nohup make start & \
+          while [ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080)" != "404" ]; do sleep 1; done
+      - name: Install test tool
+        run: go get -u github.com/ezedh/go-regression
+
+      - name: Checkout tests repo
+        uses: actions/checkout@master
+        with:
+          repository: bootcamp-go/bootcamps-tests
+          token: ${{ github.event.inputs.token }}
+          ref: ${{ github.event.inputs.company }}
+          path: './tests'
+
+      - name: Run tests
+        timeout-minutes: 5
+        run: go-regression --base http://127.0.0.1:8080/api/v1 --path ./tests/wave-${{ github.event.inputs.wave }}/sprint-${{ github.event.inputs.sprint }} -- wave=${{ github.event.inputs.wave }} sprint=${{ github.event.inputs.sprint }} group=${{ github.event.inputs.group }} company=${{ github.event.inputs.company }}
+
+      - name: Show JSON
+        run: cat ./report/example_test_report.json | jq
+
+      - name: Send to API
+        run: |
+          curl -s -X POST ${{ secrets.API_URL }} -H "Content-Type: application/json" -H "x-api-key: ${{ secrets.API_KEY }}" -d @./report/example_test_report.json | jq
