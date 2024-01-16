@@ -1,26 +1,34 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
 
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/usuario/repositorio/cmd/server/routes"
+	"github.com/usuario/repositorio/internal/application"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	// NO MODIFICAR
-	db, err := sql.Open("mysql", "meli_sprint_user:Meli_Sprint#123@/melisprint")
-	if err != nil {
-		panic(err)
+	// env
+	// ...
+
+	// app
+	// - config
+	addrCfg := ":8080"
+	mysqlCfg := mysql.Config{
+		User:      "melisprint_user",
+		Passwd:    "melisprint_pass",
+		Net:       "tcp",
+		Addr:      "localhost:3306",
+		DBName:    "melisprint",
+		ParseTime: true,
 	}
-
-	eng := gin.Default()
-
-	router := routes.NewRouter(eng, db)
-	router.MapRoutes()
-
-	if err := eng.Run(); err != nil {
-		panic(err)
+	cfg := application.ConfigServerChi{Addr: addrCfg, MySQLDSN: mysqlCfg.FormatDSN()}
+	// - server
+	server := application.NewServerChi(cfg)
+	// - run
+	if err := server.Run(); err != nil {
+		fmt.Println(err)
+		return
 	}
 }
