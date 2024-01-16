@@ -1,0 +1,17 @@
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - develop
+      - dev
+name: Gif
+jobs:
+  pr_check:
+    runs-on: ubuntu-latest
+    name: Comment
+    steps:
+      - uses: actions/checkout@v2
+      - name: PR Action
+        uses: koushikmohan1996/action-pr-gifs@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
